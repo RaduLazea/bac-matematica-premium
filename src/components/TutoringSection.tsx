@@ -157,7 +157,7 @@ export const TutoringSection = () => {
     const message = encodeURIComponent(
       `Bună ziua! Am încercat să efectuez o plată pe site-ul dumneavoastră pentru meditații, dar plata nu s-a putut finaliza. Vă rog să mă ajutați cu această problemă. Pachetul selectat: ${cart[0]?.title || 'Nu s-a specificat'}, Valoare: ${cart.reduce((sum, item) => sum + item.price, 0)} RON.`
     );
-    const phoneNumber = "40123456789"; // Replace with actual WhatsApp number
+    const phoneNumber = "+40754656353"; // Replace with actual WhatsApp number
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
     
     window.open(whatsappUrl, '_blank');
