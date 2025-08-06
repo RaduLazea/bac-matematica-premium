@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Monitor, Users, Clock, MapPin, CheckCircle, ShoppingCart } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Monitor, Users, Clock, MapPin, CheckCircle, ShoppingCart, MessageCircle, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export const TutoringSection = () => {
   const [cart, setCart] = useState<any[]>([]);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
   const { toast } = useToast();
 
   const packages = [
@@ -119,16 +121,48 @@ export const TutoringSection = () => {
 
       if (data?.url) {
         // Open Stripe checkout in a new tab
-        window.open(data.url, '_blank');
+        const paymentWindow = window.open(data.url, '_blank');
+        
+        // Check if payment window was blocked or failed to open
+        if (!paymentWindow) {
+          handlePaymentError();
+          return;
+        }
+
+        // Monitor payment window for closure/failure
+        const checkPaymentWindow = setInterval(() => {
+          if (paymentWindow.closed) {
+            clearInterval(checkPaymentWindow);
+            // Wait a bit and check if we got redirected to success page
+            setTimeout(() => {
+              if (!window.location.href.includes('payment-success')) {
+                // Payment likely failed or was cancelled
+                handlePaymentError();
+              }
+            }, 2000);
+          }
+        }, 1000);
       }
     } catch (error) {
       console.error('Payment error:', error);
-      toast({
-        title: "Eroare la procesarea plății",
-        description: "A apărut o eroare. Vă rugăm să încercați din nou.",
-        variant: "destructive"
-      });
+      handlePaymentError();
     }
+  };
+
+  const handlePaymentError = () => {
+    setShowErrorDialog(true);
+  };
+
+  const openWhatsApp = () => {
+    const message = encodeURIComponent(
+      `Bună ziua! Am încercat să efectuez o plată pe site-ul dumneavoastră pentru meditații, dar plata nu s-a putut finaliza. Vă rog să mă ajutați cu această problemă. Pachetul selectat: ${cart[0]?.title || 'Nu s-a specificat'}, Valoare: ${cart.reduce((sum, item) => sum + item.price, 0)} RON.`
+    );
+    const phoneNumber = "40123456789"; // Replace with actual WhatsApp number
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    
+    window.open(whatsappUrl, '_blank');
+    setShowErrorDialog(false);
+    setCart([]); // Clear cart after redirecting to WhatsApp
   };
 
   const getPackageIcon = (iconType: any) => {
@@ -262,6 +296,40 @@ export const TutoringSection = () => {
             </div>
           </div>
         </div>
+
+        {/* Error Dialog for Payment Failures */}
+        <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
+                <AlertTriangle className="w-8 h-8 text-orange-600" />
+              </div>
+              <DialogTitle className="text-center text-xl">Problemă cu plata</DialogTitle>
+              <DialogDescription className="text-center space-y-3">
+                <p>Din păcate, plata nu a putut fi finalizată din motive tehnice.</p>
+                <p className="font-medium">
+                  Pentru a rezolva rapid această problemă, veți fi redirectat către administratorul paginii prin WhatsApp.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Vă puteți discuta direct orice întrebări sau nelămuriri legate de serviciile oferite.
+                </p>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col space-y-3 mt-6">
+              <Button onClick={openWhatsApp} className="w-full">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contactează prin WhatsApp
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowErrorDialog(false)}
+                className="w-full"
+              >
+                Închide
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
