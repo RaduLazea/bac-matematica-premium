@@ -88,6 +88,49 @@ export const TutoringSection = () => {
     });
   };
 
+  const handlePayment = async () => {
+    if (cart.length === 0) {
+      toast({
+        title: "Coșul este gol",
+        description: "Adăugați pachete în coș pentru a continua.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Process the first item in cart
+      const packageItem = cart[0];
+      const packageData = {
+        title: packageItem.title,
+        type: packageItem.type,
+        sessionType: packageItem.location,
+        hours: 1, // Default 1 hour
+        pricePerHour: packageItem.price
+      };
+      
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: { packageData }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Eroare la procesarea plății",
+        description: "A apărut o eroare. Vă rugăm să încercați din nou.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getPackageIcon = (iconType: any) => {
     const IconComponent = iconType;
     return <IconComponent className="h-6 w-6" />;
@@ -180,8 +223,8 @@ export const TutoringSection = () => {
               </div>
               
               <div className="space-y-2">
-                <Button className="w-full" size="lg">
-                  Plătește cu cardul
+                <Button className="w-full" size="lg" onClick={handlePayment}>
+                  Plătește cu cardul (Stripe)
                 </Button>
                 <Button variant="outline" className="w-full" size="lg">
                   Plată ramburs
