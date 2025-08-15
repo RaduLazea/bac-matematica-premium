@@ -13,7 +13,7 @@ port = 54323
 
 [auth]
 enabled = true
-external_providers = ["google"]
+external_providers = ["google", "github", "facebook", "twitter"]
 
 [functions.create-payment]
 verify_jwt = false
