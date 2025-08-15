@@ -3,16 +3,14 @@ import { Button } from '@/components/ui/button';
 
 export const ContactButtons = () => {
   const handleWhatsAppClick = () => {
-    // Replace with your actual WhatsApp number
-    const phoneNumber = "+40123456789"; // UPDATE THIS WITH YOUR PHONE NUMBER
+    const phoneNumber = "+40740123456"; // Replace with your actual WhatsApp number
     const message = "Salut! Am o întrebare despre lecțiile de matematică.";
     const whatsappUrl = `https://wa.me/${phoneNumber.replace('+', '')}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleInstagramClick = () => {
-    // Replace with your actual Instagram username
-    const instagramUsername = "prof_matematica"; // UPDATE THIS WITH YOUR INSTAGRAM USERNAME
+    const instagramUsername = "prof_matematica_oficial"; // Replace with your actual Instagram username
     const instagramUrl = `https://instagram.com/${instagramUsername}`;
     window.open(instagramUrl, '_blank');
   };

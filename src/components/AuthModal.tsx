@@ -77,11 +77,14 @@ export const AuthModal = ({ open, onClose, mode, onModeChange }: AuthModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" aria-describedby="auth-dialog-description">
         <DialogHeader>
           <DialogTitle>
             {mode === 'signin' ? 'Conectează-te' : 'Creează cont'}
           </DialogTitle>
+          <p id="auth-dialog-description" className="text-sm text-muted-foreground">
+            {mode === 'signin' ? 'Conectează-te la contul tău pentru a accesa toate funcționalitățile.' : 'Creează un cont nou pentru a începe să înveți matematica.'}
+          </p>
         </DialogHeader>
 
         <div className="space-y-4">
