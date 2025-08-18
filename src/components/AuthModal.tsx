@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
+import { PasswordResetModal } from './PasswordResetModal';
 import { Github, Facebook, Twitter, Mail } from 'lucide-react';
 
 interface AuthModalProps {
@@ -20,6 +21,7 @@ export const AuthModal = ({ open, onClose, mode, onModeChange }: AuthModalProps)
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
   const { signIn, signUp, signInWithProvider } = useAuth();
   const { toast } = useToast();
 
@@ -186,6 +188,18 @@ export const AuthModal = ({ open, onClose, mode, onModeChange }: AuthModalProps)
             </Button>
           </form>
 
+          {mode === 'signin' && (
+            <div className="text-center">
+              <Button
+                variant="link"
+                onClick={() => setShowPasswordReset(true)}
+                className="p-0 h-auto text-sm"
+              >
+                Ați uitat parola?
+              </Button>
+            </div>
+          )}
+
           <div className="text-center text-sm">
             <span className="text-muted-foreground">
               {mode === 'signin' ? 'Nu ai cont?' : 'Ai deja cont?'}
@@ -200,6 +214,11 @@ export const AuthModal = ({ open, onClose, mode, onModeChange }: AuthModalProps)
           </div>
         </div>
       </DialogContent>
+
+      <PasswordResetModal 
+        open={showPasswordReset}
+        onClose={() => setShowPasswordReset(false)}
+      />
     </Dialog>
   );
 };

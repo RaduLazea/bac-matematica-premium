@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
 import { AuthModal } from './AuthModal';
+import { ThemeToggle } from './ThemeToggle';
 import { Menu, X, BookOpen, User, ShoppingCart, Map } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -93,6 +94,7 @@ export const Header = () => {
 
             {/* User Menu */}
             <div className="hidden lg:flex items-center space-x-4">
+              <ThemeToggle />
               {user ? (
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
@@ -171,6 +173,10 @@ export const Header = () => {
                 >
                   Newsletter
                 </button>
+                
+                <div className="pt-4 border-t flex justify-center">
+                  <ThemeToggle />
+                </div>
                 
                 {user ? (
                   <div className="pt-4 border-t">
